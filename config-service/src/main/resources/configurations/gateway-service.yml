@@ -1,0 +1,83 @@
+eureka:
+  client:
+    register-with-eureka: false
+
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:4200"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - PATCH
+              - DELETE
+              - OPTIONS
+            allowedHeaders:
+              - "Origin"
+              - "Content-Type"
+              - "Accept"
+              - "Authorization"
+              - "Access-Control-Allow-Origin"
+              - "Access-Control-Allow-Credentials"
+            exposedHeaders:
+              - "Authorization"
+              - "Access-Control-Allow-Origin"
+              - "Access-Control-Allow-Credentials"
+            allowCredentials: true
+            maxAge: 3600
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: user-service-students
+          uri: http://localhost:8090
+          predicates:
+            - Path=/api/v1/students/**
+        - id: user-service-instructors
+          uri: http://localhost:8090
+          predicates:
+            - Path=/api/v1/instructors/**
+        - id: user-service-institutions
+          uri: http://localhost:8090
+          predicates:
+            - Path=/api/v1/institutions/**
+        - id: review-service
+          uri: http://localhost:9090
+          predicates:
+            - Path=/api/v1/reviews/**
+        - id: auth-service-authentication
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/v1/authentication/**
+        - id: auth-service-roles
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/v1/roles/**
+        - id: auth-service-users
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/v1/users/**
+        - id: games-service
+          uri: http://localhost:9095
+          predicates:
+            - Path=/api/v1/games/**
+        - id: games-scores-service
+          uri: http://localhost:9095
+          predicates:
+            - Path=/api/v1/scores/**
+        - id: news-service
+          uri: http://localhost:8093
+          predicates:
+            - Path=/api/v1/news/**
